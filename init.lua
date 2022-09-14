@@ -19,6 +19,7 @@ require'nvim-treesitter.configs'.setup {
 }
 
 return require('packer').startup(function()
+  use 'ThePrimeagen/harpoon'
   use 'jiangmiao/auto-pairs'
   use 'junegunn/vim-easy-align'
   use 'wbthomason/packer.nvim'
