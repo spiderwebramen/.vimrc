@@ -12,6 +12,3 @@ vim.o.hidden = true
 vim.o.backup = false
 vim.o.writebackup = false
 vim.o.updatetime = 300
--- vim.keymap.set('i', '<Tab>', function() print(vim.fn.pumvisible()) end)
-
--- vim.api.nvim_set_keymap("i", )

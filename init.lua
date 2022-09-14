@@ -3,7 +3,6 @@ require('colors')
 require('telescope-config')
 require('coc-config')
 require('lualine').setup()
--- require("nvim-autopairs").setup()
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "rust",
@@ -20,8 +19,8 @@ require'nvim-treesitter.configs'.setup {
 }
 
 return require('packer').startup(function()
+  use 'jiangmiao/auto-pairs'
   use 'junegunn/vim-easy-align'
-  use 'windwp/nvim-autopairs'
   use 'wbthomason/packer.nvim'
   use {'neoclide/coc.nvim', branch = 'release'}
   use 'folke/tokyonight.nvim'
