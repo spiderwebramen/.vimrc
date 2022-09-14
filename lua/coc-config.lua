@@ -12,6 +12,3 @@ vim.o.hidden = true
 vim.o.backup = false
 vim.o.writebackup = false
 vim.o.updatetime = 300
-
-vim.api.nvim_set_keymap("n", "ga", "<Plug>(EasyAlign)", {})
-vim.api.nvim_set_keymap("v", "ga", "<Plug>(EasyAlign)", {})

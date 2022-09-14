@@ -39,6 +39,12 @@ vim.api.nvim_set_keymap("n", "<leader>t", ":sp<CR> :term<CR> :resize 20N<CR> i",
 vim.api.nvim_set_keymap("t", "<Esc>", "<C-\\><C-n>", {noremap = true, silent = true})
 -- custom
 vim.api.nvim_set_keymap('i', "<C-a>", '<Esc>la', { noremap = true })
+vim.api.nvim_set_keymap("n", "ga", "<Plug>(EasyAlign)", {})
+vim.api.nvim_set_keymap("v", "ga", "<Plug>(EasyAlign)", {})
+vim.api.nvim_set_keymap('n', '<M-Right>', '<C-W><C-L>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<M-Left>', '<C-W><C-H>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<M-Up>', '<C-W><C-K>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<M-Down>', '<C-W><C-J>', { noremap = true })
 -- vim.api.nvim_set_keymap('i', "<C-A>", '<C-o>A', { noremap = true })
 
 vim.g["netrw_banner"] = 0
