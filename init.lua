@@ -1,5 +1,3 @@
--- Set <space> as the leader key
--- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -72,7 +70,8 @@ vim.o.confirm = true
 vim.o.tabstop = 4
 vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
--- vim.o.smarttab = true
+vim.o.smarttab = true
+vim.o.expandtab = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -128,6 +127,17 @@ local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
 require('lazy').setup({
+    {
+        'unblevable/quick-scope',
+        init = function()
+            vim.cmd [[
+            let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+            highlight QuickScopePrimary guifg='#fe0000' gui=underline ctermfg=155 cterm=underline
+            highlight QuickScopeSecondary guifg='#00fe00' gui=underline ctermfg=155 cterm=underline
+        ]]
+        end,
+    },
+    { 'shortcuts/no-neck-pain.nvim' },
     'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
     -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
@@ -277,22 +287,7 @@ require('lazy').setup({
             -- [[ Configure Telescope ]]
             -- See `:help telescope` and `:help telescope.setup()`
             require('telescope').setup {
-                -- You can put your default mappings / updates / etc. in here
-                --  All the info you're looking for is in `:help telescope.setup()`
-                --
-                -- defaults = {
-                --   mappings = {
-                --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-                --   },
-                -- },
-                pickers = {
-                    find_files = {
-                        theme = 'ivy',
-                    },
-                    buffers = {
-                        theme = 'ivy',
-                    },
-                },
+                defaults = require('telescope.themes').get_ivy(),
                 extensions = {
                     ['ui-select'] = {
                         require('telescope.themes').get_dropdown(),
@@ -417,27 +412,27 @@ require('lazy').setup({
 
                     -- Rename the variable under your cursor.
                     --  Most Language Servers support renaming across files, etc.
-                    map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
+                    map('<leader>cr', vim.lsp.buf.rename, '[C]ode [R]ename')
 
                     -- Execute a code action, usually your cursor needs to be on top of an error
                     -- or a suggestion from your LSP for this to activate.
-                    map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+                    map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
                     -- Find references for the word under your cursor.
-                    map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+                    map('<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
                     -- Jump to the implementation of the word under your cursor.
                     --  Useful when your language has ways of declaring types without an actual implementation.
-                    map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+                    map('<leader>gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
                     -- Jump to the definition of the word under your cursor.
                     --  This is where a variable was first declared, or where a function is defined, etc.
                     --  To jump back, press <C-t>.
-                    map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+                    map('<leader>gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
                     -- WARN: This is not Goto Definition, this is Goto Declaration.
                     --  For example, in C this would take you to the header.
-                    map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+                    map('<leader>gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
                     -- Fuzzy find all the symbols in your current document.
                     --  Symbols are things like variables, functions, types, etc.
@@ -781,11 +776,18 @@ require('lazy').setup({
         'echasnovski/mini.nvim',
         config = function()
             require('mini.ai').setup { n_lines = 500 }
-            require('mini.surround').setup()
-
-            local indentscope = require 'mini.indentscope'
-            indentscope.gen_animation.none()
-            indentscope.setup()
+            require('mini.surround').setup {
+                -- whatever the default gives me is so stupid i can't
+                mappings = {
+                    add = 'ys',
+                    delete = 'ds',
+                    replace = 'cs',
+                    find = '',
+                    find_left = '',
+                    highlight = '',
+                },
+            }
+            require('mini.pairs').setup()
 
             local statusline = require 'mini.statusline'
             statusline.setup { use_icons = vim.g.have_nerd_font }
@@ -793,10 +795,12 @@ require('lazy').setup({
             statusline.section_location = function()
                 return '%2l:%-2v'
             end
+
             vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { bg = '#73d936', fg = '#101010' })
         end,
     },
-    { -- Highlight, edit, and navigate code
+
+    {
         'nvim-treesitter/nvim-treesitter',
         build = ':TSUpdate',
         main = 'nvim-treesitter.configs', -- Sets main module to use for opts
@@ -820,6 +824,26 @@ require('lazy').setup({
         --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
         --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
         --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+    },
+
+    {
+        'lukas-reineke/indent-blankline.nvim',
+        config = function()
+            local highlight = { 'IndentLineYellow' }
+
+            local hooks = require 'ibl.hooks'
+            hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+                vim.api.nvim_set_hl(0, 'IndentLineYellow', { fg = '#9e95c7' })
+            end)
+
+            require('ibl').setup {
+                scope = {
+                    highlight = highlight,
+                    show_start = false,
+                    show_end = false,
+                },
+            }
+        end,
     },
 
     -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
