@@ -126,6 +126,7 @@ end
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
+-- PLUGINS
 require('lazy').setup({
     {
         'unblevable/quick-scope',
@@ -710,7 +711,11 @@ require('lazy').setup({
                 -- <c-k>: Toggle signature help
                 --
                 -- See :h blink-cmp-config-keymap for defining your own keymap
-                preset = 'default',
+                preset = 'enter',
+                ['<Tab>'] = { 'select_next', 'fallback' },
+                ['<S-Tab>'] = { 'select_prev', 'fallback' },
+                ['<C-p>'] = { 'snippet_backward', 'fallback_to_mappings' },
+                ['<C-n>'] = { 'snippet_forward', 'fallback_to_mappings' },
 
                 -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
                 --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
