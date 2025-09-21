@@ -138,7 +138,16 @@ require('lazy').setup({
         ]]
         end,
     },
+
     { 'shortcuts/no-neck-pain.nvim' },
+
+    {
+        'stevearc/oil.nvim',
+        config = function()
+            require('oil').setup()
+        end,
+    },
+
     'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
     -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
